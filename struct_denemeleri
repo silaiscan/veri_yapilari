@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct kalem_urun {
+	const char* urun_isim;
+	int  urun_fiyat;
+	int urun_stok;
+}kalem_urun;
+
+typedef struct kirtasiye_urun {
+	int urun_barkod;
+	struct kalem_urun x;
+}kirtasiye_urun;
+
+void display(kirtasiye_urun a) {
+	printf("isim %s\n", a.x.urun_isim);  //kirtasiye_urun içindeki kalem_urunden urun_fiyat çekmek için atdığım değişkenleri kullandım
+	printf("barkod %d\n", a.urun_barkod);
+	printf("stok %d\n", a.x.urun_stok);
+	printf("fiyat %d\n", a.x.urun_fiyat);
+
+}
+int main()
+{
+	kirtasiye_urun tukenmez;       // typdef sayesinde struct kirtasiye_urun yazmama gerek kalmadı
+	tukenmez.x.urun_fiyat = 50;
+	tukenmez.x.urun_isim = "tukenmezkalem";
+	tukenmez.x.urun_stok = 100;
+	tukenmez.urun_barkod = 1002;
+	
+
+	kalem_urun* ptr2 = (kalem_urun*)malloc(sizeof(kalem_urun));
+	ptr2->urun_fiyat = 2000;
+	ptr2->urun_isim = "kursun";
+	ptr2->urun_stok = 125;
+	
+	kirtasiye_urun* ptr = &tukenmez;
+	printf("kirtasiye_urun pointer'inin icindeki adres %p\n", ptr);
+	printf("kirtasiye_urun pointerinin adresindeki kalem_urun degiskeninin fiyat bilgisnin tutuldugu adres % p\n", &(ptr->x.urun_fiyat));
+	printf("kirtasiye_urun pointerinin tuttugu adresteki fiyat bilgisnin tutuldugu adres %p\n", &(ptr->urun_barkod));
+	printf("kirtasiye_urun pointerinin adresindeki kalem_urun degiskeninin isim bilgisnin tutuldugu adres %p\n", &(ptr->x.urun_isim));
+	printf("kirtasiye_urun pointerinin adresi %d\n", &ptr);
+
+	// ptrnin içinde tuttuğu adres ile  barkodun adresi aynı çünkü structlar ilk değişkenlerinin adreslerini alıyorlar
+	}
