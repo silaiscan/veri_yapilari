@@ -1,0 +1,28 @@
+//pointer çalışması
+#include <stdio.h>
+#include <stdlib.h>
+void iki_carp(int x) {
+	x = x * 2;            // x globalde tanımlı değişken olduğu için değeri hesaplansada değişmiyor
+	printf("%d\n", x);
+}
+void bes_carp(int* ptr) {
+	 *ptr=*ptr * 5;        //ptr'tuttuğu adresteki değer değişiyor ve aynı adrese yeni değer yerleşiyor çünkü işaretçi kullandık
+}
+int main()
+{
+	int x = 50;
+	int* ptr = &x;
+	printf("%d\n", *ptr); //ptrnin tuttuğu adresin içindeki değri verir,yani x değeri
+	printf("%d\n", x);   //x in değerini verir
+	printf("%p\n", &ptr); //ptr değişkeninin kendi bulunduğu adresi verir
+	printf("%p\n", &x); //x in adresini verir,yani  ptr değişkeninin değerini
+	printf("%p\n", ptr); //ptrnin içinde tuttuğu adresi verir,yani xin adresi
+
+	iki_carp(x);
+	printf("%d\n", x); //fonksiyonda sayı 100 olsada nbu satırda 50 çıktısı alırız çünkü x globalin değeri 50
+	bes_carp(ptr);
+	printf("%d\n",x); //x in değeri işaretçi sayesinde değişti ve kalıcı olarak 250 oldu
+	printf("%d\n", *ptr);
+	return 0;
+}
+
