@@ -1,0 +1,24 @@
+//kullanıcıdan alınan sayıya göre yer açıp dizi yazdıran program
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <stdlib.h>
+
+int main()
+{
+	int* ptr;
+	int sutun_sayisi,deger,i,j;
+	printf("sutun sayisini giriniz :");
+	scanf("%d", &sutun_sayisi);
+	ptr = (int*)malloc(sizeof(int) * sutun_sayisi);
+
+		for (i = 0; i < sutun_sayisi; i++) {
+			printf("%d .indisteki degeri giriniz :", i);
+			scanf("%d", &deger);
+			*(ptr + i) = deger;	
+	    }
+		for (i = 0; i < sutun_sayisi; i++) {
+			printf("%d,", *(ptr + i));
+		}
+		free(ptr); //belleği serbest bırakıyor
+	return 0;
+}
