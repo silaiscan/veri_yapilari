@@ -1,0 +1,149 @@
+//tek yönlü bağlı liste tüm işlemler
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <stdlib.h>
+
+struct node {
+    int data;
+    struct node *isaretci;
+};
+struct node* ilkdugum = NULL;
+struct node* kontrol = NULL;
+
+void bastansil() {
+    struct node* ikinci = NULL;
+    ikinci = ilkdugum->isaretci;
+    free(ilkdugum);
+    ilkdugum = ikinci;
+}
+void sondansil() {
+    kontrol = ilkdugum;
+    while (kontrol->isaretci->isaretci != NULL) {    //bu islem bize sondan bir önceki elemanı buldurdu
+        kontrol = kontrol->isaretci;
+    }
+    free(kontrol->isaretci);            //bu son elemanı siliyor
+    kontrol->isaretci = NULL;   //sondan bir önceki son oldu
+}
+void basaekle(int veri) {
+    struct node* basaeklenecek = (struct node*)malloc(sizeof(struct node));
+    basaeklenecek->data = veri;
+    basaeklenecek->isaretci = ilkdugum;
+    ilkdugum = basaeklenecek;
+}
+void arayaekle(int x, int y) {
+    struct node* arayaeklenecek = (struct node*)malloc(sizeof(struct node));
+    arayaeklenecek->data = y;
+    kontrol = ilkdugum;
+    while (kontrol->isaretci->data != x) {
+        kontrol = kontrol->isaretci;
+    }
+    struct node* onunegelen = (struct node*)malloc(sizeof(struct node));
+        onunegelen = kontrol->isaretci;
+        kontrol->isaretci = arayaeklenecek;
+        arayaeklenecek->isaretci = onunegelen;
+}
+void sonaEkle(int veri) {
+    struct node* sonaeklenecek = (struct node*)malloc(sizeof(struct node));
+    sonaeklenecek->data = veri;
+    sonaeklenecek->isaretci = NULL;
+
+    if (ilkdugum == NULL) {
+        ilkdugum = sonaeklenecek;
+    }
+    else {
+        kontrol = ilkdugum;
+        while (kontrol->isaretci != NULL) {
+            kontrol = kontrol->isaretci;
+        }
+        kontrol->isaretci = sonaeklenecek;
+    }
+}
+void yazdir() {
+    kontrol = ilkdugum;
+    while (kontrol->isaretci != NULL) {
+        printf("%d=>", kontrol->data);
+        kontrol = kontrol->isaretci;
+    }
+    printf("%d\n", kontrol->data);
+}
+void aradansil(int x) {
+    if (ilkdugum->data == x) {
+        bastansil();
+    }
+    struct node* arkasindansilinen = NULL;
+    struct node* silinendensonraki = NULL;
+    kontrol = ilkdugum;
+    while (kontrol->isaretci->data != x) {
+        kontrol = kontrol->isaretci;
+    }
+    if (kontrol->isaretci == NULL) {
+        sondansil();
+    }
+    arkasindansilinen = kontrol;
+    silinendensonraki = kontrol->isaretci->isaretci;
+    free(kontrol->isaretci);
+    arkasindansilinen->isaretci = silinendensonraki;
+
+}
+void terscevir() {
+    struct node* onceki = NULL;
+    struct node* gecici;
+    kontrol = ilkdugum;
+    while (kontrol != NULL) {             //işlemi anlatıyorum 1->2->3->NULL    NULL<-1<-2<-3 //kontrol 2,kontrol->next 3 olur while döngüsünde
+        gecici = kontrol->isaretci;        //geçici=3                        
+        kontrol->isaretci = onceki;       //kontrol->isaretci=NULL
+        onceki = kontrol;                 //onceki=2
+        kontrol = gecici;                 //kontrol=3 böylece 3 son eleman oldu ve null gösterdi
+    }
+    ilkdugum = onceki;                    //son kalan eleman baş oldu
+}
+int main()
+{
+    int secim,deger,on;
+    while (1 == 1) {
+        printf(" yapmak  istediginiz islemi seciniz :\n");
+        printf("1-sondan eleman ekleme \n2-bastan eleman ekleme\n3-araya eleman ekleme\n4-sondan eleman sil\n5-bastan eleman sil\n6-aradan eleman sil\n7-ters çevirme  ");
+        scanf("%d", &secim);
+        switch (secim) {
+        case 1:
+            printf(" sona eklenecek sayiyi giriniz :");
+            scanf("%d", &deger);
+            sonaEkle(deger);
+            yazdir();
+            break;
+        case 2:
+            printf(" basa eklenecek sayiyi giriniz :");
+            scanf("%d", &deger);
+            basaekle(deger);
+            yazdir();
+            break;
+        case 3:
+            printf("araya eklenecek sayiyi giriniz: ");
+            scanf("%d", &deger);
+            printf("hangi sayinin onune eklenecek? ");
+            scanf("%d", &on);
+            arayaekle(on, deger);
+            yazdir();
+            break;
+        case 4:
+            sondansil();
+            yazdir();
+            break;
+        case 5:
+            bastansil();
+            yazdir();
+            break;
+        case 6:
+            printf("hangi sayiyi silmek istiyorsunuz? ");
+            scanf("%d", &deger);
+            aradansil(deger);
+            yazdir();
+            break;
+        case 7:
+            terscevir();
+            yazdir();
+            break;
+        }
+    }
+    return 0;
+}
