@@ -1,0 +1,61 @@
+#define _CRT_SECURE_NO_WARNINGS
+#define BOYUT 5
+#include <stdio.h>
+#include <stdlib.h>
+
+int dizi[BOYUT], indis;
+
+void push(int veri) {
+	if (indis + 1 == BOYUT)
+	{
+		printf("stack dolu!");
+	}
+	else {
+		indis = indis + 1;
+		dizi[indis] = veri;
+	}
+}
+void pop() {
+	if (indis == -1) {
+		printf("stack bos!");
+	}
+	else {
+		indis = indis - 1;
+	}
+}
+int peek() {
+	return dizi[indis];
+}
+void yazdir() {
+	for (int i = 0; i < indis + 1; i++) {
+		printf("%d ", dizi[i]);
+	}
+	printf("->en ust ");
+}
+int main()
+{
+	int secim=0, veri=0;
+	indis = -1;
+	while (1 == 1) {
+		printf("hangi islemi yapmak istersiniz?\n");
+		printf("1-push\n2-pop\n3-peek\n");
+		scanf("%d", &secim);
+		switch (secim) {
+		case 1:
+			printf("eklemek istediginiz sayiyi yazin :\n");
+			scanf("%d", &veri);
+			push(veri);
+			yazdir();
+			break;
+		case 2:
+			pop();
+			yazdir();
+			break;
+		case 3:
+			int a = peek();
+			printf("\n Bagli listenin top pozisyonundaki elemani = %d\n", a);
+			break;
+		}
+	}
+	return 0;
+}
