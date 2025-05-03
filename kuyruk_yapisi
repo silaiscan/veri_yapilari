@@ -1,0 +1,118 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct kuyruk {
+	int on, arka, boyut;
+	unsigned kapasite; //unsigned 0 ve pozitif sayılar demek yani kapasiteye doğru değerler girilmesi için baştan önlem aldık
+	int* dizi; //bu dinamik diziyi işaret eden işaretçi anlamına geliyor ve kuyruk içinde tanımlayarak kuyrukla ilgili hale getirip on arka gibi verileri kullanmasını sağlıyoruz
+}kuyruk;
+kuyruk* kuyrukolustur(unsigned kapasite) {  //bu oluşturulan kuruğun adresini döndüren bir fonksiyon ve kapasite sayısının parametre olarak alıyor
+	kuyruk* kuyruk1 = (kuyruk*)malloc(sizeof(kuyruk));
+	kuyruk1->kapasite = kapasite;
+	kuyruk1->on = 0;//eleman çıkarma buradan yapıılır bu yüzden default olarak 0 olmalı
+	kuyruk1->boyut = 0;//eleman eklemediğimiz için default olarak 0 olmalı
+	kuyruk1->arka = kapasite-1;//bunu yapmamızın sebebi ilk eleman girilidiğinde arka=(arka+1)%kapasite diye bir işlem yapıcaz çünkü dairesel kuyruk 
+	                           //oluşturmak istiyoruz yani son elaman dolduğunda ekleyeceğimiz yeni eleman baştaki indislere yerleşebilecek diyelim kapasite 5 ve
+	                          // ilk elemanı ekledik ve arka=4 (4+1)%5=0 ile eleman dizi[0]a yerleşti,şimdi arka değeri 0 oldu (0+1)%5=1 eleman dizi[1]e yerleşti ve 
+	                          // diyelim  4.indis doldu ama 1.yi boşalttık arka değeri 4 (4+1)%5=0 ile dizi[0]a yerleşim sağlandı.
+	kuyruk1->dizi = (int*)calloc(kuyruk1->kapasite,sizeof(int));//calloc mallocla aynı ama tüm değerleri 0 dan başlattığı için daha güvenli
+	return kuyruk1;//kuyruk1* yazmadık çünkü başta zaten kuyruk 1,struct kuyruk* yapısı ile yani bir pointer olarak tanımlandı böylece pointer olarak geri dönmüş oluyor.
+}
+void enqueue(kuyruk* kuyruk1,int veri ) { //arka ve boyutu degistirir
+	if (kuyruk1->boyut == kuyruk1->kapasite) {
+		printf("\n%d eklenemedi,kuyruk dolu!!\n\n",veri);
+		return;//bu ifade fonksiyonu erken sonlandırır,koşul doğru ise alt satırlar okunmaz
+	}
+	else {
+		kuyruk1->arka = (kuyruk1->arka + 1) % kuyruk1->kapasite;
+		kuyruk1->dizi[kuyruk1->arka] = veri;
+		kuyruk1->boyut = kuyruk1->boyut + 1;
+		printf("\n%d kuyruga eklendi\n\n", veri);
+	}
+}
+void dequeue(kuyruk* kuyruk1) { //on ve boyutu degistirir
+	if (kuyruk1->boyut == 0) {
+		printf("\nkuyruk boş bu sebeple eleman silinmedi!!\n\n");
+		return;
+	}
+	else {
+		int silinecek = kuyruk1->dizi[kuyruk1->on];
+		kuyruk1->dizi[kuyruk1->on] = 0;//boşalan alanı sıfırladım ve yeni eleman alabilir 
+		kuyruk1->on = (kuyruk1->on + 1) % kuyruk1->kapasite;//arkadaki islemle aynı diyelim on 0.indisteydi,on=(0+1)%5=1 yeni on degeri 1 oldu yani bir kendinden sonra giren
+		                                                   //elemana geçmiş oldu.
+		kuyruk1->boyut = kuyruk1->boyut - 1;
+		printf("\n%d elamani silindi\n\n", silinecek);
+	}
+
+}
+int ondekieleman(kuyruk* kuyruk1) {//burada aldığı parametre pointer kullandıgı için fonksiyonda yaptığımız değişikliklerin kalıcı olmasını sağlıyor
+	if (kuyruk1->boyut == 0) {
+		return -1;
+	}
+	else {
+		return kuyruk1->dizi[kuyruk1->on];
+	}
+}
+int arkadakieleman(kuyruk* kuyruk1) {
+	if (kuyruk1->boyut == 0) {
+		return -1;
+	}
+	else {
+		return kuyruk1->dizi[kuyruk1->arka];
+	}
+}
+void goster(kuyruk* kuyruk1) {
+	printf("---kuyruk icerigi---\n\n");
+	printf("on indis:%d   arka indis:%d   boyut:%d   kapasite:%d\n\n", kuyruk1->on, kuyruk1->arka, kuyruk1->boyut, kuyruk1->kapasite);//burada on ve arka elemanlar yazılmaz,on ve arka elemanların 
+	                                                                                                                           //hangi indiste yer aldığı yazılır
+	printf("on eleman:%d   arka eleman:%d\n\n", ondekieleman(kuyruk1), arkadakieleman(kuyruk1));
+	printf("---dizi icerigi---\n\n");
+	for (int i = 0; i < kuyruk1->kapasite; i++) {
+		printf("| %3d. - %3d | ", i, kuyruk1->dizi[i]); //%3d nin amacı sayıyı 3 boşluğa sığdırmak yani  __7,_77,777 gibi düşün sağa yaslıyor
+	}
+	printf("\n\n\n");
+	for (int i = 0; i < kuyruk1->on; i++) { //burada az önce yazdığımız dizi içeriği kısmı 15 karakterlik kısım kaplıyor ve for döngüsüyle bulunduğu indisin başına geçip 15 boşluk bırakarak ön indisi belirtiyor
+		char bosluk = ' ';
+		printf("%15c", bosluk);//
+	}
+	printf("       O");
+	printf("\n");
+	for (int i = 0; i < kuyruk1->arka; i++) {
+		char bosluk = ' ';
+		printf("%15c", bosluk);//
+	}
+	printf("       A");
+	printf("\n\n\n");
+	printf("--------------\n\n");
+}
+int main()
+{
+	unsigned kapasite;
+	printf("kuyrugun kapasitesini giriniz :");
+	scanf("%d", &kapasite);
+	kuyruk* k = kuyrukolustur(kapasite);
+	while(1==1){
+		int secim, deger;
+		printf("yapmak istediginiz islemi seciniz :");
+		printf("1-kuyruga eleman ekleme\n2-kuyruktan eleman silme\n3-kuyruk bilgilerini goruntuleme\n");
+		scanf("%d", &secim);
+		switch (secim) {
+		case 1:
+			printf("eklemek istediginiz degeri giriniz :");
+			scanf("%d", &deger);
+			enqueue(k, deger);
+			goster(k);
+			break;
+
+		case 2:
+			dequeue(k);
+			goster(k);
+			break;
+		case 3:
+			goster(k);
+			break;
+		}
+	}
+return 0;
+}
