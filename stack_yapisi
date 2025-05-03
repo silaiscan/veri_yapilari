@@ -1,3 +1,4 @@
+//DİZİ İLE STACK YAPISI OLUŞTURMA
 #define _CRT_SECURE_NO_WARNINGS
 #define BOYUT 5
 #include <stdio.h>
@@ -54,6 +55,79 @@ int main()
 		case 3:
 			int a = peek();
 			printf("\n Bagli listenin top pozisyonundaki elemani = %d\n", a);
+			break;
+		}
+	}
+	return 0;
+}
+//BAĞLI LİSTE İLE STACK YAPISI OLUŞTURMA
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <stdlib.h>
+
+struct node {
+	int data;
+	struct node* isaretci;
+};
+struct node* top = NULL;
+void push(int veri) {
+	struct node* eklenecek = (struct node*)malloc(sizeof(struct node));
+	eklenecek->data = veri;
+	eklenecek->isaretci = NULL;
+	if (top == NULL) {
+		top = eklenecek;
+	}
+	else {
+		eklenecek->isaretci = top; //burada temp yazmadık çünkü topun içini zaten işaretçi kısmı boş olan eklenecek->işaretçi kısmına attık
+		top = eklenecek;
+	}
+}
+void pop() {
+	if (top->data== NULL) {
+		printf("stack bos!!");
+	}
+	else {
+		struct node* temp;
+		temp = top;          // burada top düğümün değerini atıp bir önceki elemanı top yapıyoruz ve değeri attığımız tempi siliyoruz
+		top = top->isaretci;
+		free(temp);
+	}
+}
+int peek() {
+	return top->data;
+}
+void yazdir() {
+	struct node* kontrol = NULL;
+	kontrol = top;
+	while (kontrol->isaretci != NULL) {  //burada(kontrol!=NULLyaparsan direkt son düğümün datasına kadar gidersin ve döngü dışında son elemanı yazdırmana gerek kalmaz
+		printf("%d =>", kontrol->data);
+		kontrol = kontrol->isaretci;
+	}
+	printf("%d=>", kontrol->data);
+	printf("NULL ");
+}
+int main() {
+	int secim, deger;
+	while (1 == 1) {
+		printf("hangi islemi yapmak istersiniz?\n");
+		printf("1-push\n2-pop\n3-peek\n");
+		scanf("%d", &secim);
+		switch (secim)
+		{
+		case 1:
+			printf("girmek istediginiz degeri yazin :");
+			scanf("%d", &deger);
+			push(deger);
+			yazdir();
+			break;
+		case 2:
+			pop();
+			yazdir();
+			break;
+
+		case 3:
+			int a = peek();
+			printf("top=%d\n", a);
 			break;
 		}
 	}
