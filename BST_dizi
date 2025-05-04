@@ -1,0 +1,83 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <stdlib.h>
+#include <conio.h>
+#include <string.h>
+#define n 100000
+
+struct BSTdizi {
+	char kelime[51];//sonda bosluk karakteri olduğu için 50 karakterlik demek
+	int sayac;
+};
+struct BSTdizi agac[n];//bu struct veri tipiyle tanımlanmış bir dizi oluşturur.yani dizinin her elemanı kelime ve sayaç içerir
+
+int main()
+{
+	char kelime1[51], aranankelime[51];//bunları farklı tanımlayabilirdik ama dizideki her eleman max 50 karakterli olacağı için ayak uydurduk
+	int indis = 0, adres;//her seferde indisi adrese eşitleyeceğiz çünkü agac[0] kök düğüm demek ve her seferinde  kontrole buradan başlıyoruz
+	FILE* fp;
+	fp = fopen("D:\\ders.txt", "rb");
+	if (fp == NULL) {
+		printf("Dosya açılamadı! Lütfen yolu ve dosya adını kontrol edin.\n");
+		exit(1);
+	}
+	while (!feof(fp)) {//feof dosyanın sonuna gelinip gelinmediğini kontrol eden bir fonksiyondur
+		adres = indis;//0dan başlamasını sağlıyorum
+		fscanf(fp,"%s", kelime1);
+		while (1) {
+			if (adres >= n) {
+				printf("dizi boyutu asildi!!");
+				break;
+			}
+			if (agac[adres].sayac > 0) {//eğer bu struct dizisi pointer olsaydı okla erişicektik ama direkt struct yapısında olduğu için . ile erişiyoruz içindekilere ve bu ifade
+				//eğer sayaç 0 dan büyükse yani o kelime daha önce de varsa demek yani ilk kelime var mı yok mu kontrol ediyoruz
+				if (strcmp(agac[adres].kelime, kelime1) == 0) {//eğer girilen kelime ile metindeki kelime aynı ise sayacı 1 arttır 
+					agac[adres].sayac++;
+					adres = indis;//adresi tekrar sıfırladık çünkü arama işlemine 0 dan başlamasını istiyoruz
+					break;
+				}
+				else {
+					if (strcmp(agac[adres].kelime, kelime1) > 0) {//eğer ağaçtaki kelime aranan kelimeden alfabetik olarak büyükse ;
+						adres = 2 * adres + 1;//sola yerleştir,diyelim ki adres=0 adres=1 oldu ve sola yerleşti
+					}
+					else {//eğer aranan kelime alfabetik olarak daha büyük ise ;
+						adres = 2 * adres + 2;//sağa yerleş
+					}
+				}
+			}
+			else {
+				strcpy(agac[adres].kelime, kelime1);
+				agac[adres].sayac = 1;
+				adres = indis;
+				break;
+			}
+		}
+	}
+	while (1) {
+		printf("aranan kelime :");
+		scanf("%s", aranankelime);//%s ile yazınca uppersand koymuyoruz
+		adres = indis;
+		while (1) {
+			if (agac[adres].sayac > 0) {
+				if (strcmp(agac[adres].kelime, aranankelime) == 0) {
+					printf("adet :%d\n", agac[adres].sayac);
+					break;
+				}
+				else {
+					if (strcmp(agac[adres].kelime, aranankelime) > 0) {
+						adres = 2 * adres + 1;
+					}
+					else {
+						adres = 2 * adres + 2;
+					}
+				}
+			}
+			else {
+				printf("aranan kelime yok\n");
+				break;
+			}
+		}
+	}
+	printf("\n\n çıktınız\n\n");
+	return 0;
+}
