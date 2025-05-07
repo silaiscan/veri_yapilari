@@ -1,0 +1,95 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct BSTdugum {
+	char kelime[51];
+	int sayac;
+	struct BSTdugum* soldgm;
+	struct BSTdugum* sagdgm;
+};
+unsigned long sayac = 0, toplam = 0;//buradaki sayaç tüm metinde toplam kaç farklı kelime olduğunu tutacak
+//toplam degeri ise dosyadan okunan tüm kelime sayısını tutacak
+void dugumekle(BSTdugum** kokptr, char* kelime) {//burada fonksiyona işaretçi değer değil adres vermeliyim.zaten benim oluşturduğum kok işaretçi olduğu için onunda işaretçisini
+	//vererek yapılan değişikliklerin main fonksiyonunda geçerli olmasını sağladık
+	if (*kokptr == NULL) { //burada *kokptr bizim oluşturduğumuz kök
+		struct BSTdugum* yenidugum = NULL;
+		if (yenidugum = (BSTdugum*)calloc(1, sizeof(BSTdugum))) {//yeni düğüme calloc ile yer atadık;
+			sayac++;
+			strcpy(yenidugum->kelime, kelime);//dosyadan alınan kelimeyi düğümün kelime kısmına attık
+			yenidugum->sayac = 1;
+			*kokptr = yenidugum;
+		}
+
+		else {
+			printf("bellekten yer alınamadi!\n");
+			return;
+		}
+	}
+	else {
+		if (strcmp((*kokptr)->kelime, kelime) > 0) {
+			dugumekle(&(*kokptr)->soldgm, kelime);//kokteki kelime alfabetik olarak büyükse yeni kelime sola
+		}
+		else {
+			dugumekle(&(*kokptr)->sagdgm, kelime);//kökteki kelime alfabetik olarak küçükse sağa yerleşir
+		}
+	}
+}
+
+int ara(BSTdugum* kokptr, char* kelime, int flag) {//burada direkt kendi düğümümüzü yazdık çünkü ara fonksiyonu yani bir şey değiştirmeyeeğiz
+	if (kokptr != NULL) {
+		if (strcmp(kokptr->kelime, kelime) == 0) {//kokteki kelime ve aranılan kelime aynı ise
+			if (flag == 1)printf("%s  %d\n", kelime, kokptr->sayac);//eğer flag 1 ise zaten ekranda gösteriyoruz ama aynı kelime geldikçe ekranda göstermek yerine sayacı arttırıyoruz sadece
+			else kokptr->sayac++;
+			return 1;
+		}
+		else if (strcmp(kokptr->kelime, kelime) > 0) {//eğer kelime aynı değilse alfabetik olarak gidip sağ sol bakma işlemi yapılıyor
+			return ara(kokptr->soldgm, kelime, flag);
+		}
+		else {
+			return ara(kokptr->sagdgm, kelime, flag);
+		}
+	}
+	else
+		return 0;
+}
+void ortadakok(BSTdugum* kokptr, long* a) {//long a kaçıncı düğümde olunduğunu sayan sayaç dışarıdanda değişiklik yapılabilsin diye adres olarak gönderilmiş 
+											//ayrıca bu fonksiyon ağaça in-order sıralama yaptırıyor
+	if (kokptr == NULL) return;
+	else {
+		(*a)++;//her çalıştığında sayaç 1 artıyor
+		ortadakok(kokptr->soldgm, a);//önce sol ağaç geziliyor küçük kelimeler
+		printf("%lu  %s  %lu\n", *a, kokptr->kelime, kokptr->sayac);//mevcut düğümün kaçıncı düğüm olduğunu,hangi kelime olduğunu ve metinde kaç kez geçtiğini gösteriyor
+		ortadakok(kokptr->sagdgm, a);
+	}
+}
+int main()
+{
+	long adet = 0;  //baştan 0 düğümle başlaması için aramaya
+	struct BSTdugum* kok = NULL;
+	char kelime[51], aranankelime[51];
+	FILE* fp;
+	fp = fopen("d:\\ders.txt", "r");
+	while (!feof(fp)) {
+		fscanf(fp,"%s", kelime);
+		toplam++;
+		if (ara(kok, kelime, 0)  == 0) {//yani kelime yoksa o kelimeyi düğüme ekliyoruz
+			dugumekle(&kok, kelime);
+		}
+	}
+	printf("toplam:%lu  sayac:%lu\n", toplam, sayac);
+	ortadakok(kok, &adet);
+	while (1){
+		printf("aranan kelime:");
+		scanf("%s", aranankelime);
+
+		if (ara(kok, aranankelime, 1) != 0) {
+			printf("var\n");
+		}
+		else {
+			printf("yok\n");
+		}
+	}
+	return 0;
+}
